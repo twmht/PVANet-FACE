@@ -71,9 +71,11 @@ def _get_image_blob(im):
     # Prevent the biggest axis from being more than MAX_SIZE
     if np.round(im_scale * im_size_max) > cfg.TEST.MAX_SIZE:
         im_scale = float(cfg.TEST.MAX_SIZE) / float(im_size_max)
-    im = cv2.resize(im_orig, None, None, fx=im_scale, fy=im_scale,
+    im_scale_x = np.floor(im.shape[1] * im_scale / cfg.TEST.SCALE_MULTIPLE_OF) * cfg.TEST.SCALE_MULTIPLE_OF / im.shape[1]
+    im_scale_y = np.floor(im.shape[0] * im_scale / cfg.TEST.SCALE_MULTIPLE_OF) * cfg.TEST.SCALE_MULTIPLE_OF / im.shape[0]
+    im = cv2.resize(im_orig, None, None, fx=im_scale_x, fy=im_scale_y,
                     interpolation=cv2.INTER_LINEAR)
-    im_info = np.hstack((im.shape[:2], im_scale))[np.newaxis, :]
+    im_info = np.hstack((im.shape[:2], np.array([im_scale_x, im_scale_y, im_scale_x, im_scale_y])))[np.newaxis, :]
     processed_ims.append(im)
 
     # Create a blob to hold the input images
@@ -91,7 +93,7 @@ def im_proposals(net, im):
             data=blobs['data'].astype(np.float32, copy=False),
             im_info=blobs['im_info'].astype(np.float32, copy=False))
 
-    scale = blobs['im_info'][0, 2]
+    scale = blobs['im_info'][0, 2:]
     boxes = blobs_out['rois'][:, 1:].copy() / scale
     scores = blobs_out['scores'].copy()
     return boxes, scores

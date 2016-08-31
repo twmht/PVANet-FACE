@@ -40,7 +40,7 @@ def get_minibatch(roidb, num_classes):
         gt_boxes[:, 4] = roidb[0]['gt_classes'][gt_inds]
         blobs['gt_boxes'] = gt_boxes
         blobs['im_info'] = np.array(
-            [[im_blob.shape[2], im_blob.shape[3], im_scales[0]]],
+            [np.hstack((im_blob.shape[2], im_blob.shape[3], im_scales[0]))],
             dtype=np.float32)
     else: # not using RPN
         # Now, build the region of interest and label blobs
@@ -139,7 +139,7 @@ def _get_image_blob(roidb, scale_inds):
             im = im[:, ::-1, :]
         target_size = cfg.TRAIN.SCALES[scale_inds[i]]
         im, im_scale = prep_im_for_blob(im, cfg.PIXEL_MEANS, target_size,
-                                        cfg.TRAIN.MAX_SIZE)
+                                        cfg.TRAIN.MAX_SIZE, cfg.TRAIN.SCALE_MULTIPLE_OF)
         im_scales.append(im_scale)
         processed_ims.append(im)
 

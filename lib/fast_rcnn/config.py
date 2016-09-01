@@ -169,6 +169,9 @@ __C.TEST.RPN_POST_NMS_TOP_N = 300
 # Proposal height and width both need to be greater than RPN_MIN_SIZE (at orig image scale)
 __C.TEST.RPN_MIN_SIZE = 16
 
+# Apply bounding box voting
+__C.TEST.BBOX_VOTE = False
+
 
 #
 # MISC

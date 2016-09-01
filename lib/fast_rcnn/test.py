@@ -18,6 +18,7 @@ from fast_rcnn.nms_wrapper import nms
 import cPickle
 from utils.blob import im_list_to_blob
 import os
+from utils.cython_bbox import bbox_vote
 
 def _get_image_blob(im):
     """Converts an image into a network input.
@@ -271,7 +272,13 @@ def test_net(net, imdb, max_per_image=100, thresh=0.05, vis=False):
             cls_dets = np.hstack((cls_boxes, cls_scores[:, np.newaxis])) \
                 .astype(np.float32, copy=False)
             keep = nms(cls_dets, cfg.TEST.NMS)
-            cls_dets = cls_dets[keep, :]
+
+            dets_NMSed = cls_dets[keep, :]
+            if cfg.TEST.BBOX_VOTE:
+                cls_dets = bbox_vote(dets_NMSed, cls_dets)
+            else:
+                cls_dets = dets_NMSed
+
             if vis:
                 vis_detections(im, imdb.classes[j], cls_dets)
             all_boxes[j][i] = cls_dets

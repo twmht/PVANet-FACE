@@ -62,21 +62,21 @@ If you find PVANET useful in your research, please consider citing:
 ### Models
 
 1. PVANET
-  `./models/pvanet/full/test.pt`: For testing-time efficiency, batch normalization (w/ its moving averaged mini-batch statistics) and scale (w/ its trained parameters) layers are merged into the corresponding convolutional layer.
-  `./models/pvanet/full/original.pt`: Original network structure.
+  - `./models/pvanet/full/test.pt`: For testing-time efficiency, batch normalization (w/ its moving averaged mini-batch statistics) and scale (w/ its trained parameters) layers are merged into the corresponding convolutional layer.
+  - `./models/pvanet/full/original.pt`: Original network structure.
 
-2. PVANET (compressed)
-  `./models/pvanet/comp/test.pt`: Compressed network w/ merging batch normalization and scale.
-  `./models/pvanet/comp/original.pt`: Original compressed network structure.
+2. PVANET (compressed):
+  - `./models/pvanet/comp/test.pt`: Compressed network w/ merging batch normalization and scale.
+  - `./models/pvanet/comp/original.pt`: Original compressed network structure.
 
 3. PVANET-lite
-  TBA
+  - TBA
 
 
 ### How to run the demo
 
 1. Download PASCAL VOC 2007 and 2012
-  Follow the instructions in [py-faster-rcnn README.md](https://github.com/rbgirshick/py-faster-rcnn#beyond-the-demo-installation-for-training-and-testing-models)
+  - Follow the instructions in [py-faster-rcnn README.md](https://github.com/rbgirshick/py-faster-rcnn#beyond-the-demo-installation-for-training-and-testing-models)
 
 2. PVANET+ on PASCAL VOC 2007
   ```Shell

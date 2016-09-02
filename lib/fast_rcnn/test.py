@@ -110,7 +110,7 @@ def _get_blobs(im, rois):
         blobs['rois'] = _get_rois_blob(rois, im_scale_factors)
     return blobs, im_scale_factors
 
-def im_detect(net, im, boxes=None):
+def im_detect(net, im, _t, boxes=None):
     """Detect object classes in an image given object proposals.
 
     Arguments:
@@ -123,6 +123,7 @@ def im_detect(net, im, boxes=None):
             background as object category 0)
         boxes (ndarray): R x (4*K) array of predicted bounding boxes
     """
+    _t['im_preproc'].tic()
     blobs, im_scales = _get_blobs(im, boxes)
 
     # When mapping from image ROIs to feature map ROIs, there's some aliasing
@@ -151,13 +152,22 @@ def im_detect(net, im, boxes=None):
         net.blobs['rois'].reshape(*(blobs['rois'].shape))
 
     # do forward
-    forward_kwargs = {'data': blobs['data'].astype(np.float32, copy=False)}
+    net.blobs['data'].data[...] = blobs['data']
+    #forward_kwargs = {'data': blobs['data'].astype(np.float32, copy=False)}
     if cfg.TEST.HAS_RPN:
-        forward_kwargs['im_info'] = blobs['im_info'].astype(np.float32, copy=False)
+        net.blobs['im_info'].data[...] = blobs['im_info']
+        #forward_kwargs['im_info'] = blobs['im_info'].astype(np.float32, copy=False)
     else:
-        forward_kwargs['rois'] = blobs['rois'].astype(np.float32, copy=False)
-    blobs_out = net.forward(**forward_kwargs)
+        net.blobs['rois'].data[...] = blobs['rois']
+        #forward_kwargs['rois'] = blobs['rois'].astype(np.float32, copy=False)
+    _t['im_preproc'].toc()
 
+    _t['im_net'].tic()
+    blobs_out = net.forward()
+    _t['im_net'].toc()
+    #blobs_out = net.forward(**forward_kwargs)
+
+    _t['im_postproc'].tic()
     if cfg.TEST.HAS_RPN:
         assert len(im_scales) == 1, "Only single-image batch implemented"
         rois = net.blobs['rois'].data.copy()
@@ -185,6 +195,7 @@ def im_detect(net, im, boxes=None):
         # Map scores and predictions back to the original set of boxes
         scores = scores[inv_index, :]
         pred_boxes = pred_boxes[inv_index, :]
+    _t['im_postproc'].toc()
 
     return scores, pred_boxes
 
@@ -241,7 +252,7 @@ def test_net(net, imdb, max_per_image=100, thresh=0.05, vis=False):
     output_dir = get_output_dir(imdb, net)
 
     # timers
-    _t = {'im_detect' : Timer(), 'misc' : Timer()}
+    _t = {'im_preproc': Timer(), 'im_net' : Timer(), 'im_postproc': Timer(), 'misc' : Timer()}
 
     if not cfg.TEST.HAS_RPN:
         roidb = imdb.roidb
@@ -259,9 +270,7 @@ def test_net(net, imdb, max_per_image=100, thresh=0.05, vis=False):
             box_proposals = roidb[i]['boxes'][roidb[i]['gt_classes'] == 0]
 
         im = cv2.imread(imdb.image_path_at(i))
-        _t['im_detect'].tic()
-        scores, boxes = im_detect(net, im, box_proposals)
-        _t['im_detect'].toc()
+        scores, boxes = im_detect(net, im, _t, box_proposals)
 
         _t['misc'].tic()
         # skip j = 0, because it's the background class
@@ -294,8 +303,9 @@ def test_net(net, imdb, max_per_image=100, thresh=0.05, vis=False):
                     all_boxes[j][i] = all_boxes[j][i][keep, :]
         _t['misc'].toc()
 
-        print 'im_detect: {:d}/{:d} {:.3f}s {:.3f}s' \
-              .format(i + 1, num_images, _t['im_detect'].average_time,
+        print 'im_detect: {:d}/{:d}  net {:.3f}s  preproc {:.3f}s  postproc {:.3f}s  misc {:.3f}s' \
+              .format(i + 1, num_images, _t['im_net'].average_time,
+                      _t['im_preproc'].average_time, _t['im_postproc'].average_time,
                       _t['misc'].average_time)
 
     det_file = os.path.join(output_dir, 'detections.pkl')

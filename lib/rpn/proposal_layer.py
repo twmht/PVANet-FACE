@@ -23,7 +23,7 @@ class ProposalLayer(caffe.Layer):
 
     def setup(self, bottom, top):
         # parse the layer parameter string, which must be valid YAML
-        layer_params = yaml.load(self.param_str_)
+        layer_params = yaml.load(self.param_str)
 
         self._feat_stride = layer_params['feat_stride']
         anchor_scales = layer_params.get('scales', (8, 16, 32))
@@ -62,11 +62,15 @@ class ProposalLayer(caffe.Layer):
         assert bottom[0].data.shape[0] == 1, \
             'Only single item batches are supported'
 
-        cfg_key = str(self.phase) # either 'TRAIN' or 'TEST'
-        pre_nms_topN  = cfg[cfg_key].RPN_PRE_NMS_TOP_N
-        post_nms_topN = cfg[cfg_key].RPN_POST_NMS_TOP_N
-        nms_thresh    = cfg[cfg_key].RPN_NMS_THRESH
-        min_size      = cfg[cfg_key].RPN_MIN_SIZE
+        cfg_key = self.phase # either 'TRAIN' or 'TEST'
+        if cfg_key == 0:
+          cfg_ = cfg.TRAIN
+        else:
+          cfg_ = cfg.TEST
+        pre_nms_topN  = cfg_.RPN_PRE_NMS_TOP_N
+        post_nms_topN = cfg_.RPN_POST_NMS_TOP_N
+        nms_thresh    = cfg_.RPN_NMS_THRESH
+        min_size      = cfg_.RPN_MIN_SIZE
 
         # the first set of _num_anchors channels are bg probs
         # the second set are the fg probs, which we want

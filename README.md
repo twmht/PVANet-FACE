@@ -60,6 +60,12 @@ If you find PVANET useful in your research, please consider citing:
     ./models/pvanet/download_models.sh
     ```
 
+5. (Optional) Download original caffemodels (without merging batch normalization and scale layers)
+    ```Shell
+    cd $FRCN_ROOT
+    ./models/pvanet/download_original_models.sh
+    ```
+
 ### Models
 
 1. PVANET

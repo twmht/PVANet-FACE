@@ -1,5 +1,5 @@
 ## PVANET: Deep but Lightweight Neural Networks for Real-time Object Detection
-by Kye-Hyeon Kim, Yeongjae Cheon, Sanghoon Hong, Byungseok Roh, Minje Park (Intel Imaging and Camera Technology)
+by Yeongjae Cheon, Sanghoon Hong, Kye-Hyeon Kim, Minje Park, Byungseok Roh (Intel Imaging and Camera Technology)
 
 ### Introduction
 
@@ -15,13 +15,14 @@ Please note that this repository doesn't contain our in-house runtime code used 
 - However it is still slower than our in-house runtime code due to the image pre-processing code written in Python (+9ms) and some poorly implemented parts in Caffe (+5 ms).
 - PVANET was trained by our in-house deep learning library, not by this implementation.
 - There might be a tiny difference in VOC2012 test results, because some hidden parameters in py-faster-rcnn may be set differently with ours.
+- PVANET-lite (76.3% mAP on VOC2012, 10th place) is originally designed to verify the effectiveness of multi-scale features for object detection, so it only uses Inception and hyper features only. Further improvement may be achievable by adding C.ReLU, residual connections, etc.
 
 ### Citing PVANET
 
 If you find PVANET useful in your research, please consider citing:
 
     @article{KimKH2016arXivPVANET,
-        author = {Kye-Hyeon Kim and Yeongjae Cheon and Sanghoon Hong and Byungseok Roh and Minje Park},
+        author = {Yeongjae Cheon and Sanghoon Hong and Kye-Hyeon Kim and Minje Park and Byungseok Roh},
         title = {{PVANET}: Deep but Lightweight Neural Networks for Real-time Object Detection},
         journal = {arXiv preprint arXiv:1608.08021},
         year = {2016}
@@ -66,18 +67,35 @@ If you find PVANET useful in your research, please consider citing:
     ./models/pvanet/download_original_models.sh
     ```
 
+6. (Optional) Download ImageNet pretrained models
+    ```Shell
+    cd $FRCN_ROOT
+    ./models/pvanet/download_imagenet_models.sh
+    ```
+
+7. (Optional) Download PVANET-lite models
+    ```Shell
+    cd $FRCN_ROOT
+    ./models/pvanet/download_lite_models.sh
+    ```
+
 ### Models
 
 1. PVANET
   - `./models/pvanet/full/test.pt`: For testing-time efficiency, batch normalization (w/ its moving averaged mini-batch statistics) and scale (w/ its trained parameters) layers are merged into the corresponding convolutional layer.
   - `./models/pvanet/full/original.pt`: Original network structure.
 
-2. PVANET (compressed):
+2. PVANET (compressed)
   - `./models/pvanet/comp/test.pt`: Compressed network w/ merging batch normalization and scale.
   - `./models/pvanet/comp/original.pt`: Original compressed network structure.
 
-3. PVANET-lite
-  - TBA
+3. PVANET (ImageNet pretrained model)
+  - `./models/pvanet/imagenet/test.pt`: Classification network w/ merging batch normalization and scale.
+  - `./models/pvanet/imagenet/original.pt`: Original classification network structure.
+
+4. PVANET-lite
+  - `./models/pvanet/lite/test.pt`: Compressed network w/ merging batch normalization and scale.
+  - `./models/pvanet/lite/original.pt`: Original compressed network structure.
 
 
 ### How to run the demo
@@ -97,9 +115,21 @@ If you find PVANET useful in your research, please consider citing:
   ./tools/test_net.py --gpu 0 --def models/pvanet/comp/test.pt --net models/pvanet/comp/test.model --cfg models/pvanet/cfgs/submit_160715.yml
   ```
 
+4. (Optional) ImageNet classification
+  ```Shell
+  cd $FRCN_ROOT
+  ./caffe-fast-rcnn/build/tools/caffe test -gpu 0 -model models/pvanet/imagenet/test.pt -weights models/pvanet/imagenet/test.model -iterations 1000
+  ```
+
+5. (Optional) PVANET-lite
+  ```Shell
+  cd $FRCN_ROOT
+  ./tools/test_net.py --gpu 0 --def models/pvanet/lite/test.pt --net models/pvanet/lite/test.model --cfg models/pvanet/cfgs/submit_160715.yml
+  ```
+
 ### Expected results
 
 - PVANET+: 83.85% mAP
 - PVANET+ (compressed): 82.90% mAP
-
-
+- ImageNet classification: 68.998% top-1 accuracy, 88.8902% top-5 accuracy, 1.28726 loss
+- PVANET-lite: 79.10% mAP

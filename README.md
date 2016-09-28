@@ -60,24 +60,36 @@ If you find PVANET useful in your research, please consider citing:
     cd $FRCN_ROOT
     ./models/pvanet/download_models.sh
     ```
+  - If it does not work,
+    1. Download [full/test.model](https://drive.google.com/open?id=0BwFPOX3S4VcBd3NPNmI1RHBZNkk) and move it to ./models/pvanet/full/
+    2. Download [comp/test.model](https://drive.google.com/open?id=0BwFPOX3S4VcBODJkckhudE1NeGM) and move it to ./models/pvanet/comp/
 
 5. (Optional) Download original caffemodels (without merging batch normalization and scale layers)
     ```Shell
     cd $FRCN_ROOT
     ./models/pvanet/download_original_models.sh
     ```
+  - If it does not work,
+    1. Download [full/original.model](https://drive.google.com/open?id=0BwFPOX3S4VcBUW1OS1Fva3VKZ1E) and move it to ./models/pvanet/full/
+    2. Download [comp/original.model](https://drive.google.com/open?id=0BwFPOX3S4VcBdVZuX3dQRzFjU1k) and move it to ./models/pvanet/comp/
 
 6. (Optional) Download ImageNet pretrained models
     ```Shell
     cd $FRCN_ROOT
     ./models/pvanet/download_imagenet_models.sh
     ```
+  - If it does not work,
+    1. Download [imagenet/original.model](https://drive.google.com/open?id=0BwFPOX3S4VcBd1VtRzdHa1NoN1k) and move it to ./models/pvanet/imagenet/
+    2. Download [imagenet/test.model](https://drive.google.com/open?id=0BwFPOX3S4VcBWnI0VHRzZWh6bFU) and move it to ./models/pvanet/imagenet/
 
 7. (Optional) Download PVANET-lite models
     ```Shell
     cd $FRCN_ROOT
     ./models/pvanet/download_lite_models.sh
     ```
+  - If it does not work,
+    1. Download [lite/original.model](https://drive.google.com/open?id=0BwFPOX3S4VcBc1ZEQldZTlZKN00) and move it to ./models/pvanet/lite/
+    2. Download [lite/test.model](https://drive.google.com/open?id=0BwFPOX3S4VcBSWg2MlpGcWlQeHM) and move it to ./models/pvanet/lite/
 
 ### Models
 

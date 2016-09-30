@@ -1,5 +1,5 @@
 ## PVANET: Deep but Lightweight Neural Networks for Real-time Object Detection
-by Yeongjae Cheon, Sanghoon Hong, Kye-Hyeon Kim, Minje Park, Byungseok Roh (Intel Imaging and Camera Technology)
+by Kye-Hyeon Kim, Sanghoon Hong, Byungseok Roh, Yeongjae Cheon, Minje Park (Intel Imaging and Camera Technology)
 
 ### Introduction
 
@@ -22,7 +22,7 @@ Please note that this repository doesn't contain our in-house runtime code used 
 If you find PVANET useful in your research, please consider citing:
 
     @article{KimKH2016arXivPVANET,
-        author = {Yeongjae Cheon and Sanghoon Hong and Kye-Hyeon Kim and Minje Park and Byungseok Roh},
+        author = {Kye-Hyeon Kim and Sanghoon Hong and Byungseok Roh and Yeongjae Cheon and Minje Park},
         title = {{PVANET}: Deep but Lightweight Neural Networks for Real-time Object Detection},
         journal = {arXiv preprint arXiv:1608.08021},
         year = {2016}

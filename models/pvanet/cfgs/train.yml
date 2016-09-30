@@ -1,0 +1,27 @@
+EXP_DIR: faster_rcnn_pvanet
+TRAIN:
+  HAS_RPN: True
+  IMS_PER_BATCH: 1
+  BBOX_NORMALIZE_TARGETS_PRECOMPUTED: True
+  RPN_POSITIVE_OVERLAP: 0.7
+  RPN_BATCHSIZE: 256
+  PROPOSAL_METHOD: gt
+  BG_THRESH_LO: 0.0
+  SCALE_MULTIPLE_OF: 32
+  MAX_SIZE: 1440
+  SCALES:
+    - 416
+    - 448
+    - 480
+    - 512
+    - 544
+    - 576
+    - 608
+    - 640
+    - 672
+    - 704
+    - 736
+    - 768
+    - 800
+    - 832
+    - 864

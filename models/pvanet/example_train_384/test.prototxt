@@ -6349,7 +6349,7 @@ layer {
   }
 }
 layer {
-  name: "fc6/scale"
+  name: "fc6/bn_scale"
   type: "Scale"
   bottom: "fc6"
   top: "fc6"
@@ -6426,7 +6426,7 @@ layer {
   }
 }
 layer {
-  name: "fc7/scale"
+  name: "fc7/bn_scale"
   type: "Scale"
   bottom: "fc7"
   top: "fc7"

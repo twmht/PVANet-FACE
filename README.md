@@ -48,7 +48,6 @@ If you find PVANET useful in your research, please consider citing:
     # Now follow the Caffe installation instructions here:
     #   http://caffe.berkeleyvision.org/installation.html
     # For your Makefile.config:
-    #   Do NOT uncomment `USE_CUDNN := 1` (for running PVANET, cuDNN is slower than Caffe native implementation)
     #   Uncomment `WITH_PYTHON_LAYER := 1`
 
     cp Makefile.config.example Makefile.config

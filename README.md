@@ -1,23 +1,24 @@
-## PVANET: Lightweight Deep Neural Networks for Real-time Object Detection
+## PVANet: Lightweight Deep Neural Networks for Real-time Object Detection
 by Sanghoon Hong, Byungseok Roh, Kye-hyeon Kim, Yeongjae Cheon, Minje Park (Intel Imaging and Camera Technology)
+Presented in [EMDNN2016](http://allenai.org/plato/emdnn/), a NIPS2016 workshop ([arXiv link](https://arxiv.org/abs/1611.08588))
 
 ### Introduction
 
-This repository is a fork from [py-faster-rcnn](https://github.com/rbgirshick/py-faster-rcnn) and demonstrates the performance of PVANET.
+This repository is a fork from [py-faster-rcnn](https://github.com/rbgirshick/py-faster-rcnn) and demonstrates the performance of PVANet.
 
 You can refer to [py-faster-rcnn README.md](https://github.com/rbgirshick/py-faster-rcnn/blob/master/README.md) and [faster-rcnn README.md](https://github.com/ShaoqingRen/faster_rcnn/blob/master/README.md) for more information.
 
 ### Desclaimer
 
-Please note that this repository doesn't contain our in-house runtime code used in the published article.
-- The original py-faster-rcnn is quite slow and there exist lots of inefficient code blocks.
-- We improved some of them, by 1) replacing the Caffe backend with its latest version (Sep 1, 2016), and 2) porting our implementation of the proposal layer.
-- However it is still slower than our in-house runtime code due to the image pre-processing code written in Python (+9ms) and some poorly implemented parts in Caffe (+5 ms).
-- PVANET was trained by our in-house deep learning library, not by this implementation.
-- There might be a tiny difference in VOC2012 test results, because some hidden parameters in py-faster-rcnn may be set differently with ours.
-- PVANET-lite (76.3% mAP on VOC2012, 10th place) is originally designed to verify the effectiveness of multi-scale features for object detection, so it only uses Inception and hyper features only. Further improvement may be achievable by adding C.ReLU, residual connections, etc.
+This repository doesn't contain our up-to-date models and codes.
+I'll be updated by the end of December.
 
-### Citing PVANET
+Please note that this repository doesn't contain our in-house codes used in the published article.
+- This version of py-faster-rcnn is slower than our in-house runtime code due to the image pre-processing code written in Python (+9 ms) and some poorly implemented parts in Caffe (+5 ms).
+- PVANet was trained by our in-house deep learning library, not by this implementation.
+- There might be a tiny difference in VOC2012 test results, because some hidden parameters in py-faster-rcnn may be set differently with ours.
+
+### Citing PVANet
 
 The BibTeX for EMDNN2016-accepted version will be updated soon
 
@@ -47,7 +48,7 @@ The BibTeX for EMDNN2016-accepted version will be updated soon
     make -j8 && make pycaffe
     ```
 
-4. Download PVANET caffemodels
+4. Download PVANet caffemodels
     ```Shell
     cd $FRCN_ROOT
     ./models/pvanet/download_models.sh
@@ -74,7 +75,7 @@ The BibTeX for EMDNN2016-accepted version will be updated soon
     1. Download [imagenet/original.model](https://drive.google.com/open?id=0BwFPOX3S4VcBd1VtRzdHa1NoN1k) and move it to ./models/pvanet/imagenet/
     2. Download [imagenet/test.model](https://drive.google.com/open?id=0BwFPOX3S4VcBWnI0VHRzZWh6bFU) and move it to ./models/pvanet/imagenet/
 
-7. (Optional) Download PVANET-lite models
+7. (Optional) Download PVANet-lite models
     ```Shell
     cd $FRCN_ROOT
     ./models/pvanet/download_lite_models.sh
@@ -85,19 +86,19 @@ The BibTeX for EMDNN2016-accepted version will be updated soon
 
 ### Models
 
-1. PVANET
+1. PVANet
   - `./models/pvanet/full/test.pt`: For testing-time efficiency, batch normalization (w/ its moving averaged mini-batch statistics) and scale (w/ its trained parameters) layers are merged into the corresponding convolutional layer.
   - `./models/pvanet/full/original.pt`: Original network structure.
 
-2. PVANET (compressed)
+2. PVANet (compressed)
   - `./models/pvanet/comp/test.pt`: Compressed network w/ merging batch normalization and scale.
   - `./models/pvanet/comp/original.pt`: Original compressed network structure.
 
-3. PVANET (ImageNet pretrained model)
+3. PVANet (ImageNet pretrained model)
   - `./models/pvanet/imagenet/test.pt`: Classification network w/ merging batch normalization and scale.
   - `./models/pvanet/imagenet/original.pt`: Original classification network structure.
 
-4. PVANET-lite
+4. PVANet-lite
   - `./models/pvanet/lite/test.pt`: Compressed network w/ merging batch normalization and scale.
   - `./models/pvanet/lite/original.pt`: Original compressed network structure.
 
@@ -107,13 +108,13 @@ The BibTeX for EMDNN2016-accepted version will be updated soon
 1. Download PASCAL VOC 2007 and 2012
   - Follow the instructions in [py-faster-rcnn README.md](https://github.com/rbgirshick/py-faster-rcnn#beyond-the-demo-installation-for-training-and-testing-models)
 
-2. PVANET+ on PASCAL VOC 2007
+2. PVANet on PASCAL VOC 2007
   ```Shell
   cd $FRCN_ROOT
   ./tools/test_net.py --gpu 0 --def models/pvanet/full/test.pt --net models/pvanet/full/test.model --cfg models/pvanet/cfgs/submit_160715.yml
   ```
 
-3. PVANET+ (compressed)
+3. PVANet (compressed)
   ```Shell
   cd $FRCN_ROOT
   ./tools/test_net.py --gpu 0 --def models/pvanet/comp/test.pt --net models/pvanet/comp/test.model --cfg models/pvanet/cfgs/submit_160715.yml
@@ -125,7 +126,7 @@ The BibTeX for EMDNN2016-accepted version will be updated soon
   ./caffe-fast-rcnn/build/tools/caffe test -gpu 0 -model models/pvanet/imagenet/test.pt -weights models/pvanet/imagenet/test.model -iterations 1000
   ```
 
-5. (Optional) PVANET-lite
+5. (Optional) PVANet-lite
   ```Shell
   cd $FRCN_ROOT
   ./tools/test_net.py --gpu 0 --def models/pvanet/lite/test.pt --net models/pvanet/lite/test.model --cfg models/pvanet/cfgs/submit_160715.yml
@@ -133,7 +134,7 @@ The BibTeX for EMDNN2016-accepted version will be updated soon
 
 ### Expected results
 
-- PVANET+: 83.85% mAP
-- PVANET+ (compressed): 82.90% mAP
+- PVANet: 83.85% mAP
+- PVANet (compressed): 82.90% mAP
 - ImageNet classification: 68.998% top-1 accuracy, 88.8902% top-5 accuracy, 1.28726 loss
 - PVANET-lite: 79.10% mAP

@@ -20,7 +20,15 @@ Please note that this repository doesn't contain our in-house codes used in the 
 
 ### Citing PVANet
 
-The BibTeX for EMDNN2016-accepted version will be updated soon
+If you want to cite this work in your publication:
+```
+@article{hong2016pvanet,
+  title={{PVANet}: Lightweight Deep Neural Networks for Real-time Object Detection},
+  author={Hong, Sanghoon and Roh, Byungseok and Kim, Kye-Hyeon and Cheon, Yeongjae and Park, Minje},
+  journal={arXiv preprint arXiv:1611.08588},
+  year={2016}
+}
+```
 
 ### Installation
 

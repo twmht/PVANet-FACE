@@ -18,7 +18,8 @@ from fast_rcnn.nms_wrapper import nms
 import cPickle
 from utils.blob import im_list_to_blob
 import os
-from utils.cython_bbox import bbox_vote
+from utils.cython_bbox import bbox_overlaps
+
 
 def _get_image_blob(im):
     """Converts an image into a network input.
@@ -240,7 +241,44 @@ def apply_nms(all_boxes, thresh):
             nms_boxes[cls_ind][im_ind] = dets[keep, :].copy()
     return nms_boxes
 
-def test_net(net, imdb, max_per_image=100, thresh=0.05, vis=False):
+def bbox_vote(dets_NMS, dets_all, thresh=0.5):
+    dets_voted = np.zeros_like(dets_NMS)   # Empty matrix with the same shape and type
+
+    _overlaps = bbox_overlaps(
+			np.ascontiguousarray(dets_NMS[:, 0:4], dtype=np.float),
+			np.ascontiguousarray(dets_all[:, 0:4], dtype=np.float))
+
+    # for each survived box
+    for i, det in enumerate(dets_NMS):
+        dets_overlapped = dets_all[np.where(_overlaps[i, :] >= thresh)[0]]
+        assert(len(dets_overlapped) > 0)
+
+        boxes = dets_overlapped[:, 0:4]
+        scores = dets_overlapped[:, 4]
+
+        out_box = np.dot(scores, boxes)
+
+        dets_voted[i][0:4] = out_box / sum(scores)        # Weighted bounding boxes
+        dets_voted[i][4] = det[4]                         # Keep the original score
+
+        # Weighted scores (if enabled)
+        if cfg.TEST.BBOX_VOTE_N_WEIGHTED_SCORE > 1:
+            n_agreement = cfg.TEST.BBOX_VOTE_N_WEIGHTED_SCORE
+            w_empty = cfg.TEST.BBOX_VOTE_WEIGHT_EMPTY
+
+            n_detected = len(scores)
+
+            if n_detected >= n_agreement:
+                top_scores = -np.sort(-scores)[:n_agreement]
+                new_score = np.average(top_scores)
+            else:
+                new_score = np.average(scores) * (n_detected * 1.0 + (n_agreement - n_detected) * w_empty) / n_agreement
+
+            dets_voted[i][4] = min(new_score, dets_voted[i][4])
+
+    return dets_voted
+
+def test_net(net, imdb, max_per_image=100, thresh=0.01, vis=False):
     """Test a Fast R-CNN network on an image database."""
     num_images = len(imdb.image_index)
     # all detections are collected into:

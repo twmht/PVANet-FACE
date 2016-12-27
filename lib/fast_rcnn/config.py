@@ -172,6 +172,10 @@ __C.TEST.RPN_MIN_SIZE = 16
 # Apply bounding box voting
 __C.TEST.BBOX_VOTE = False
 
+# Apply box scoring heuristics
+__C.TEST.BBOX_VOTE_N_WEIGHTED_SCORE = 1
+__C.TEST.BBOX_VOTE_WEIGHT_EMPTY = 0.5
+
 
 #
 # MISC

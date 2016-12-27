@@ -1,0 +1,22 @@
+train_net: "models/pvanet/example_train/train.prototxt"
+
+base_lr: 0.001
+lr_policy: "plateau"
+gamma: 0.1
+stepsize: 50000
+display: 20
+average_loss: 100
+momentum: 0.9
+weight_decay: 0.0002
+
+plateau_winsize: 50000
+plateau_winsize: 75000
+plateau_winsize: 100000
+
+
+# We disable standard caffe solver snapshotting and implement our own snapshot
+# function
+snapshot: 0
+# We still use the snapshot prefix, though
+snapshot_prefix: "pvanet_frcnn"
+iter_size: 2

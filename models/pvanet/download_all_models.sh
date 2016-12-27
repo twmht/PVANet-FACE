@@ -1,7 +1,7 @@
 #/bin/bash
 
-# ImageNet pre-trained
-wget https://www.dropbox.com/s/a2y0e12kmu8wjsf/pva9.1_preAct_train_iter_1900000.caffemodel?dl=1 -O models/pvanet/pretrained/pva9.1_preAct_train_iter_1900000.caffemodel
+# ImageNet pre-trained (for fine-tuning)
+wget https://www.dropbox.com/s/g9ly0fc0fspdfz8/pva9.1_pretrained_no_fc6.caffemodel?dl=1 -O models/pvanet/pretrained/pva9.1_pretrained_no_fc6.caffemodel
 
 # COCO train/val + VOC0712 train/val
 wget https://www.dropbox.com/s/sq1kujjil5qg5bw/PVA9.1_ImgNet_COCO_VOC0712.caffemodel?dl=1 -O models/pvanet/pva9.1/PVA9.1_ImgNet_COCO_VOC0712.caffemodel

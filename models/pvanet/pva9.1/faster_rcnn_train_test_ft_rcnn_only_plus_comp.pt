@@ -6458,6 +6458,25 @@ layer {
   bottom: 'rpn_cls_prob_reshape'
   bottom: 'rpn_bbox_pred'
   bottom: 'im_info'
+  top: 'rpn_rois'
+  top: 'rpn_scores'
+  include { phase: TRAIN }
+  python_param {
+    module: 'rpn.proposal_layer'
+    layer: 'ProposalLayer'
+    param_str: "{'feat_stride': 16, 'ratios': [0.333, 0.5, 0.667, 1, 1.5, 2, 3], 'scales': [2, 3, 5, 9, 16, 32]}"
+  }
+}
+layer {
+  name: 'mute_rpn_scores'
+  bottom: 'rpn_scores'
+  type: 'Silence'
+  include { phase: TRAIN }
+}
+layer {
+  name: 'roi-data'
+  type: 'Python'
+  bottom: 'rpn_rois'
   bottom: 'gt_boxes'
   top: 'rois'
   top: 'labels'
@@ -6466,9 +6485,9 @@ layer {
   top: 'bbox_outside_weights'
   include { phase: TRAIN }
   python_param {
-    module: 'rpn.proposal_layer'
-    layer: 'ProposalLayer2'
-    param_str: "{'feat_stride': 16, 'num_classes': 21, 'ratios': [0.333, 0.5, 0.667, 1, 1.5, 2, 3], 'scales': [2, 3, 5, 9, 16, 32]}"
+    module: 'rpn.proposal_target_layer'
+    layer: 'ProposalTargetLayer'
+    param_str: "'num_classes': 21"
   }
 }
 layer {

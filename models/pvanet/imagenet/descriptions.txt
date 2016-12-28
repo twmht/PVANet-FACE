@@ -1,0 +1,25 @@
+PVA9.1 ImageNet
+70.0% top-1 with 4.17 GMAC (conv)
+
+A PVA9.0 variant with the following changes
+- Multi-GPU training
+  * larger batch size
+  * additional regularization through BN
+- Fixed a bug in the prototxt (shift)
+- Data augmentation (multi-scale training images)
+- Pre-activation structure
+
+Structure
+- Output size: 1/32, 384 chns
+- Inspired by DRN, GoogLeNet and CReLU
+- Introduced a modificed CReLU  
+
+Training 
+- Trained with a multi-scale ILSVRC2012 training set.
+  * image size: 256x256, 384x384, 512x512
+
+Testing
+- 70.0% top-1 with 192x192 inputs
+
+Contact Sanghoon Hong for any questions
+

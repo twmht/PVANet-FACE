@@ -64,22 +64,31 @@ If you want to cite this work in your publication:
     ./models/pvanet/download_voc_best.sh
     ```    
     
-5. (Optional) Download all available VOC models (including pre-trained and compressed models)
+6. (Optional) Download all available models (including pre-trained and compressed models)
     ```Shell
     cd $FRCN_ROOT
     ./models/pvanet/download_all_models.sh
     ```
 
-6. (Optional) Download ImageNet classification model
+7. (Optional) Download ILSVRC2012 (ImageNet) classification model
     ```Shell
     cd $FRCN_ROOT
     ./models/pvanet/download_imagenet_model.sh
     ```
 
+8. (Optional) If the scripts don't work, please download the models from ...
+    |  Model | Google Drive |
+    | ------ | ---- |
+    | PVANet for VOC2007 | [link](https://drive.google.com/open?id=0Bw_6VpHzQoMVRGZOSEctOEVMLXc) |
+    | PVANet for VOC2012 | [link](https://drive.google.com/open?id=0Bw_6VpHzQoMVa3M0Zm5zNnEtQUE) |
+    | PVANet for VOC2012 (compressed) | [link](https://drive.google.com/open?id=0Bw_6VpHzQoMVZU1BdEJDZG5MVXM) |
+    | PVANet for ILSVRC2012 (ImageNet) | [link](https://drive.google.com/open?id=0Bw_6VpHzQoMVTjctVVhjMXo1X3c) |
+    | PVANet pre-trained | [link](https://drive.google.com/open?id=0Bw_6VpHzQoMVak5FVFBWU0Uyb3M) |
+
 ### How to run the demo
 
 1. Download PASCAL VOC 2007 and 2012
-  - Follow the instructions in [py-faster-rcnn README.md](https://github.com/rbgirshick/py-faster-rcnn#beyond-the-demo-installation-for-training-and-testing-models)
+-- Follow the instructions in [py-faster-rcnn README.md](https://github.com/rbgirshick/py-faster-rcnn#beyond-the-demo-installation-for-training-and-testing-models)
 
 2. PVANet on PASCAL VOC 2007
     ```Shell
@@ -111,3 +120,4 @@ If you want to cite this work in your publication:
 | 192x192 | 30.00 | N/A |
 | 224x224 | 27.66 | 8.84 |
 - We re-trained a 224x224 model from the '192x192' model as a base model.
+

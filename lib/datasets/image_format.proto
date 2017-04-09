@@ -1,0 +1,15 @@
+message Image {
+  optional string name = 1;
+  required bytes data = 2;
+  required int32 width = 3;
+  required int32 height = 4;
+
+  message Object {
+      optional string name = 1;
+      required int32 minX = 2;
+      required int32 minY = 3;
+      required int32 maxX = 4;
+      required int32 maxY = 5;
+  }
+  repeated Object objects = 5;
+}

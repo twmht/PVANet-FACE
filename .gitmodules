@@ -1,4 +1,4 @@
 [submodule "caffe-for-pva"]
 	path = caffe-fast-rcnn
-	url = https://github.com/sanghoon/caffe.git
-	branch = dev_pvanet
+	url = https://github.com/twmht/caffe-pva-faster-rcnn
+	branch = master

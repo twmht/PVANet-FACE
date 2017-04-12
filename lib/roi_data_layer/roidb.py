@@ -22,9 +22,8 @@ def prepare_roidb(imdb):
     """
     roidb = imdb.roidb
     for i in xrange(len(imdb.image_index)):
-        roidb[i]['image'] = imdb.image_path_at(i)
-        roidb[i]['width'] = imdb.width[i]
-        roidb[i]['height'] = imdb.height[i]
+        index = imdb.image_index[i]
+        roidb[i]['image'] = index
         # need gt_overlaps as a dense array for argmax
         gt_overlaps = roidb[i]['gt_overlaps'].toarray()
         # max overlap with gt over classes (columns)

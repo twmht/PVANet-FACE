@@ -60,7 +60,10 @@ class RoIDataLayer(caffe.Layer):
         else:
             db_inds = self._get_next_minibatch_inds()
             minibatch_db = [self._roidb[i] for i in db_inds]
-            return get_minibatch(minibatch_db, self._num_classes)
+            return get_minibatch(self._imdb, minibatch_db, self._num_classes)
+
+    def set_imdb(self, imdb):
+        self._imdb = imdb
 
     def set_roidb(self, roidb):
         """Set the roidb to be used by this layer during training."""

@@ -58,22 +58,23 @@ def parse_args():
     return args
 
 def combined_roidb(imdb_names):
-    def get_roidb(imdb_name):
-        imdb = get_imdb(imdb_name)
-        print 'Loaded dataset `{:s}` for training'.format(imdb.name)
+    def get_roidb(imdb):
         imdb.set_proposal_method(cfg.TRAIN.PROPOSAL_METHOD)
         print 'Set proposal method: {:s}'.format(cfg.TRAIN.PROPOSAL_METHOD)
         roidb = get_training_roidb(imdb)
         return roidb
 
-    roidbs = [get_roidb(s) for s in imdb_names.split('+')]
-    roidb = roidbs[0]
-    if len(roidbs) > 1:
-        for r in roidbs[1:]:
-            roidb.extend(r)
-        imdb = datasets.imdb.imdb(imdb_names)
-    else:
-        imdb = get_imdb(imdb_names)
+    imdb = get_imdb(imdb_names)
+    print 'Loaded dataset `{:s}` for training'.format(imdb.name)
+    roidb = get_roidb(imdb)
+    #  roidbs = [get_roidb(s) for s in imdb_names.split('+')]
+    #  roidb = roidbs[0]
+    #  if len(roidbs) > 1:
+        #  for r in roidbs[1:]:
+            #  roidb.extend(r)
+        #  imdb = datasets.imdb.imdb(imdb_names)
+    #  else:
+        #  imdb = get_imdb(imdb_names)
     return imdb, roidb
 
 if __name__ == '__main__':
@@ -107,6 +108,6 @@ if __name__ == '__main__':
     output_dir = get_output_dir(imdb)
     print 'Output will be saved to `{:s}`'.format(output_dir)
 
-    train_net(args.solver, roidb, output_dir,
+    train_net(args.solver, imdb, roidb, output_dir,
               pretrained_model=args.pretrained_model,
               max_iters=args.max_iters)

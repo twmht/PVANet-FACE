@@ -12,8 +12,11 @@ import numpy.random as npr
 import cv2
 from fast_rcnn.config import cfg
 from utils.blob import prep_im_for_blob, im_list_to_blob
+from io import BytesIO
+from skimage import io
+from PIL import Image
 
-def get_minibatch(roidb, num_classes):
+def get_minibatch(imdb, roidb, num_classes):
     """Given a roidb, construct a minibatch sampled from it."""
     num_images = len(roidb)
     # Sample random scales to use for each image in this batch
@@ -26,7 +29,7 @@ def get_minibatch(roidb, num_classes):
     fg_rois_per_image = np.round(cfg.TRAIN.FG_FRACTION * rois_per_image)
 
     # Get the input image blob, formatted for caffe
-    im_blob, im_scales = _get_image_blob(roidb, random_scale_inds)
+    im_blob, im_scales = _get_image_blob(imdb, roidb, random_scale_inds)
 
     blobs = {'data': im_blob}
 
@@ -126,7 +129,7 @@ def _sample_rois(roidb, fg_rois_per_image, rois_per_image, num_classes):
 
     return labels, overlaps, rois, bbox_targets, bbox_inside_weights
 
-def _get_image_blob(roidb, scale_inds):
+def _get_image_blob(imdb, roidb, scale_inds):
     """Builds an input blob from the images in the roidb at the specified
     scales.
     """
@@ -134,7 +137,11 @@ def _get_image_blob(roidb, scale_inds):
     processed_ims = []
     im_scales = []
     for i in xrange(num_images):
-        im = cv2.imread(roidb[i]['image'])
+        proto = imdb.get_proto_at(roidb[i]['image'])
+        mem = BytesIO(proto.data)
+        im = io.imread(mem)
+        im = im[:,:,::-1]
+
         if roidb[i]['flipped']:
             im = im[:, ::-1, :]
         target_size = cfg.TRAIN.SCALES[scale_inds[i]]

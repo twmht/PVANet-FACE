@@ -15,14 +15,18 @@ import uuid
 from voc_eval import voc_eval
 from fast_rcnn.config import cfg
 from image_format_pb2 import Image
+import struct
 
 class wider(imdb):
     def __init__(self):
         imdb.__init__(self, 'wider')
-        self._data_path = os.path.join(self._get_default_path(), 'wider')
+        self._data_path = self._get_default_path()
 
-        self._image_set = open(os.path.join(self._data_path, 'image.db'), 'rb')
-        self._index_set = open(os.path.join(self._data_path, 'index.db'), 'rb')
+        self._index_set_file = os.path.join(self._data_path, 'index.db')
+        self._image_set_file = os.path.join(self._data_path, 'image.db')
+
+        self._image_set = open(self._image_set_file, 'rb')
+        self._index_set = open(self._index_set_file, 'rb')
 
         self._image_width = []
         self._image_height = []
@@ -30,9 +34,10 @@ class wider(imdb):
         self._classes = ('__background__', # always index 0
                          'face')
         self._class_to_ind = dict(zip(self.classes, xrange(self.num_classes)))
+        # max indexes not including flipped images
         self._image_index = self._load_image_set_index()
         # Default to roidb handler
-        self._roidb_handler = self.selective_search_roidb
+        self._roidb_handler = self.gt_roidb
         self._salt = str(uuid.uuid4())
         self._comp_id = 'comp4'
 
@@ -44,18 +49,39 @@ class wider(imdb):
                        'rpn_file'    : None,
                        'min_size'    : 2}
 
-    def image_path_at(self, index):
-        self._index_set.seek((index - 1) * 16)
-        to, size = struct.unpack('QQ', self._index_set.read(16))
-        return (to, size)
+    @property
+    def width(self):
+        return self._image_width
 
-    def get_content_at(self, index):
-        self._index_set.seek((index - 1) * 16)
+    @property
+    def height(self):
+        return self._image_height
+
+    def _load_image_set_index(self):
+        """
+        Load the indexes listed in this dataset's image set file.
+        """
+        # Example path to image set file:
+        statinfo = os.stat(self._index_set_file)
+        num = statinfo.st_size / 16
+        return [i for i in xrange(0, num)]
+
+
+    def get_proto_at(self, index):
+        self._index_set.seek(index  * 16)
         to, size = struct.unpack('QQ', self._index_set.read(16))
+        self._image_set.seek(to)
         byte = self._image_set.read(size)
-        image = Image()
-        content = image.ParseFromString(byte)
-        return content
+        proto = Image()
+        proto.ParseFromString(byte)
+        return proto
+
+
+    def _get_default_path(self):
+        """
+        Return the default path where PASCAL VOC is expected to be installed.
+        """
+        return os.path.join(cfg.DATA_DIR, "widerface")
 
 
     def gt_roidb(self):
@@ -79,17 +105,17 @@ class wider(imdb):
 
         return gt_roidb
 
-    def _load_bounding_box(index):
+    def _load_bounding_box(self, index):
 
-        content = get_content_at(index)
+        proto = self.get_proto_at(index)
 
         # load width and height of the image
-        width = content.width
-        height = content.height
-        self._image_width.append(width)
-        self._image_height.append(height)
+        width = proto.width
+        height = proto.height
+        #  self._image_width.append(width)
+        #  self._image_height.append(height)
 
-        objs = content.objects
+        objs = proto.objects
         num_objs = len(objs)
 
         boxes = np.zeros((num_objs, 4), dtype=np.uint16)
@@ -114,6 +140,8 @@ class wider(imdb):
 
         return {'boxes' : boxes,
                 'gt_classes': gt_classes,
+                'width': width,
+                'height': height,
                 'gt_overlaps' : overlaps,
                 'flipped' : False,
                 'seg_areas' : seg_areas}

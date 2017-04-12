@@ -14,7 +14,7 @@ See README.md for installation instructions before running.
 """
 
 import _init_paths
-from fast_rcnn.config import cfg
+from fast_rcnn.config import cfg, cfg_from_file, cfg_from_list
 from fast_rcnn.test import im_detect
 from fast_rcnn.nms_wrapper import nms
 from utils.timer import Timer
@@ -24,17 +24,9 @@ import scipy.io as sio
 import caffe, os, sys, cv2
 import argparse
 
-CLASSES = ('__background__',
-           'aeroplane', 'bicycle', 'bird', 'boat',
-           'bottle', 'bus', 'car', 'cat', 'chair',
-           'cow', 'diningtable', 'dog', 'horse',
-           'motorbike', 'person', 'pottedplant',
-           'sheep', 'sofa', 'train', 'tvmonitor')
+_t = {'im_preproc': Timer(), 'im_net' : Timer(), 'im_postproc': Timer(), 'misc' : Timer()}
 
-NETS = {'vgg16': ('VGG16',
-                  'VGG16_faster_rcnn_final.caffemodel'),
-        'zf': ('ZF',
-                  'ZF_faster_rcnn_final.caffemodel')}
+CLASSES = ('__background__', 'face')
 
 
 def vis_detections(im, class_name, dets, thresh=0.5):
@@ -79,7 +71,8 @@ def demo(net, image_name):
     # Detect all object classes and regress object bounds
     timer = Timer()
     timer.tic()
-    scores, boxes = im_detect(net, im)
+
+    scores, boxes = im_detect(net, im, _t)
     timer.toc()
     print ('Detection took {:.3f}s for '
            '{:d} object proposals').format(timer.total_time, boxes.shape[0])
@@ -100,13 +93,19 @@ def demo(net, image_name):
 def parse_args():
     """Parse input arguments."""
     parser = argparse.ArgumentParser(description='Faster R-CNN demo')
-    parser.add_argument('--gpu', dest='gpu_id', help='GPU device id to use [0]',
+    parser.add_argument('--cfg', dest='cfg_file',
+                        help='optional config file', default=None, type=str)
+    parser.add_argument('--def', dest='prototxt',
+                        help='prototxt file defining the network',
+                        default=None, type=str)
+    parser.add_argument('--net', dest='caffemodel',
+                        help='model to test',
+                        default=None, type=str)
+    parser.add_argument('--gpu', dest='gpu_id', help='GPU id to use',
                         default=0, type=int)
-    parser.add_argument('--cpu', dest='cpu_mode',
-                        help='Use CPU mode (overrides --gpu)',
-                        action='store_true')
-    parser.add_argument('--net', dest='demo_net', help='Network to use [vgg16]',
-                        choices=NETS.keys(), default='vgg16')
+    parser.add_argument('--set', dest='set_cfgs',
+                        help='set config keys', default=None,
+                        nargs=argparse.REMAINDER)
 
     args = parser.parse_args()
 
@@ -117,21 +116,25 @@ if __name__ == '__main__':
 
     args = parse_args()
 
-    prototxt = os.path.join(cfg.MODELS_DIR, NETS[args.demo_net][0],
-                            'faster_rcnn_alt_opt', 'faster_rcnn_test.pt')
-    caffemodel = os.path.join(cfg.DATA_DIR, 'faster_rcnn_models',
-                              NETS[args.demo_net][1])
+    if args.cfg_file is not None:
+        cfg_from_file(args.cfg_file)
+    if args.set_cfgs is not None:
+        cfg_from_list(args.set_cfgs)
+
+    #  model_path = os.path.abspath(os.path.join(cfg.ROOT_DIR, 'models', 'pvanet', 'pva9.1'))
+    #  caffemodel = os.path.join(model_path, args.caffemodel)
+    caffemodel = args.caffemodel
+    prototxt = args.prototxt
 
     if not os.path.isfile(caffemodel):
         raise IOError(('{:s} not found.\nDid you run ./data/script/'
                        'fetch_faster_rcnn_models.sh?').format(caffemodel))
 
-    if args.cpu_mode:
-        caffe.set_mode_cpu()
-    else:
-        caffe.set_mode_gpu()
-        caffe.set_device(args.gpu_id)
-        cfg.GPU_ID = args.gpu_id
+
+    caffe.set_mode_gpu()
+    caffe.set_device(args.gpu_id)
+    cfg.GPU_ID = args.gpu_id
+
     net = caffe.Net(prototxt, caffemodel, caffe.TEST)
 
     print '\n\nLoaded network {:s}'.format(caffemodel)
@@ -139,7 +142,7 @@ if __name__ == '__main__':
     # Warmup on a dummy image
     im = 128 * np.ones((300, 500, 3), dtype=np.uint8)
     for i in xrange(2):
-        _, _= im_detect(net, im)
+        _, _= im_detect(net, im, _t)
 
     im_names = ['000456.jpg', '000542.jpg', '001150.jpg',
                 '001763.jpg', '004545.jpg']

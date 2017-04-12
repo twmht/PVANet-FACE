@@ -15,6 +15,7 @@ import numpy as np
 import os
 
 from caffe.proto import caffe_pb2
+import google.protobuf.text_format
 import google.protobuf as pb2
 
 class SolverWrapper(object):
@@ -23,7 +24,7 @@ class SolverWrapper(object):
     use to unnormalize the learned bounding-box regression weights.
     """
 
-    def __init__(self, solver_prototxt, roidb, output_dir,
+    def __init__(self, solver_prototxt, imdb, roidb, output_dir,
                  pretrained_model=None):
         """Initialize the SolverWrapper."""
         self.output_dir = output_dir
@@ -50,6 +51,7 @@ class SolverWrapper(object):
         with open(solver_prototxt, 'rt') as f:
             pb2.text_format.Merge(f.read(), self.solver_param)
 
+        self.solver.net.layers[0].set_imdb(imdb)
         self.solver.net.layers[0].set_roidb(roidb)
 
     def snapshot(self):
@@ -148,12 +150,12 @@ def filter_roidb(roidb):
                                                        num, num_after)
     return filtered_roidb
 
-def train_net(solver_prototxt, roidb, output_dir,
+def train_net(solver_prototxt, imdb, roidb, output_dir,
               pretrained_model=None, max_iters=40000):
     """Train a Fast R-CNN network."""
 
     roidb = filter_roidb(roidb)
-    sw = SolverWrapper(solver_prototxt, roidb, output_dir,
+    sw = SolverWrapper(solver_prototxt, imdb, roidb, output_dir,
                        pretrained_model=pretrained_model)
 
     print 'Solving...'

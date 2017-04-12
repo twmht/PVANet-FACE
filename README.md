@@ -1,4 +1,4 @@
-## PVA-FACE: PVANET for face detection
+## PVANet-FACE: PVANET for face detection
 
 ### Introduction
 Training a face detection model using PVANet.

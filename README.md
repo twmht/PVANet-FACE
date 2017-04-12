@@ -43,7 +43,7 @@ This repository contains source files of face detection using the PVANet. It is 
     ```
 
 ### Training the face detection model
-1. (Optional) Download all available models (including pre-trained and compressed models)
+1. Download all available models (including pre-trained and compressed models)
     ```Shell
     cd $FRCN_ROOT
     ./models/pvanet/download_all_models.sh

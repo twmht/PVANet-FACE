@@ -1,40 +1,30 @@
-## PVANet: Lightweight Deep Neural Networks for Real-time Object Detection
-by Sanghoon Hong, Byungseok Roh, Kye-hyeon Kim, Yeongjae Cheon, Minje Park (Intel Imaging and Camera Technology)
-Presented in [EMDNN2016](http://allenai.org/plato/emdnn/), a NIPS2016 workshop ([arXiv link](https://arxiv.org/abs/1611.08588))
+## PVA-FACE: PVANET for face detection
 
 ### Introduction
+Training a face detection model using PVANet.
 
-This repository is a fork from [py-faster-rcnn](https://github.com/rbgirshick/py-faster-rcnn) and demonstrates the performance of PVANet.
+![face detection 1](imgs/0.jpg?raw=true "Face detection for women")
+![face detection 2](imgs/1.jpg?raw=true "Face detection for men")
 
-You can refer to [py-faster-rcnn README.md](https://github.com/rbgirshick/py-faster-rcnn/blob/master/README.md) and [faster-rcnn README.md](https://github.com/ShaoqingRen/faster_rcnn/blob/master/README.md) for more information.
+The dataset used for training is [WIDERFACE](http://mmlab.ie.cuhk.edu.hk/projects/WIDERFace/)
 
-### Desclaimer
+This repository contains source files of face detection using the PVANet. It is developed based on the awesome [pva-faster-rcnn](https://github.com/sanghoon/pva-faster-rcnn) repository.
 
-Please note that this repository doesn't contain our in-house codes used in the published article.
-- This version of py-faster-rcnn is slower than our in-house runtime code (e.g. image pre-processing code written in Python)
-- PVANet was trained by our in-house deep learning library, not by this implementation.
-- There might be a tiny difference in VOC2012 test results, because some hidden parameters in py-faster-rcnn may be set differently with ours.
 
-### Citing PVANet
+### Requirement
+1. Nivida CUDA 8.0
+2. Nvidia CUDNN 6
+3. Python 2
 
-If you want to cite this work in your publication:
-```
-@article{hong2016pvanet,
-  title={{PVANet}: Lightweight Deep Neural Networks for Real-time Object Detection},
-  author={Hong, Sanghoon and Roh, Byungseok and Kim, Kye-Hyeon and Cheon, Yeongjae and Park, Minje},
-  journal={arXiv preprint arXiv:1611.08588},
-  year={2016}
-}
-```
 
 ### Installation
-1. Clone the Faster R-CNN repository
+1. Clone this repository
     ```Shell
     # Make sure to clone with --recursive
-    git clone --recursive https://github.com/sanghoon/pva-faster-rcnn.git
+    git clone --recursive https://github.com/twmht/pva-faster-rcnn.git 
     ```
 
-2. We'll call the directory that you cloned Faster R-CNN into `FRCN_ROOT`. Build the Cython modules
+2. We'll call the directory that you cloned as `FRCN_ROOT`. Build the Cython modules
     ```Shell
     cd $FRCN_ROOT/lib
     make
@@ -52,73 +42,31 @@ If you want to cite this work in your publication:
     make -j8 && make pycaffe
     ```
 
-4. Download PVANet detection model for VOC2007
-    ```Shell
-    cd $FRCN_ROOT
-    ./models/pvanet/download_voc2007.sh
-    ```
-
-5. Download PVANet detection model for VOC2012 (published model)
-    ```Shell
-    cd $FRCN_ROOT
-    ./models/pvanet/download_voc_best.sh
-    ```    
-    
-6. (Optional) Download all available models (including pre-trained and compressed models)
+### Training the face detection model
+1. (Optional) Download all available models (including pre-trained and compressed models)
     ```Shell
     cd $FRCN_ROOT
     ./models/pvanet/download_all_models.sh
     ```
 
-7. (Optional) Download ILSVRC2012 (ImageNet) classification model
+2. Download [WIDERFace imdb](https://drive.google.com/open?id=0B18-oWPEXrIWT1lrN2lLdDc1VkE) and put it as `data/widerface/image.db` and `data/widerface/index.db`.
+
+   I use [python-widerface](https://pypi.python.org/pypi/python-widerface/0.1.1) to pack all the images of WIDERFACE into the custom-defined imdb, where the format of imdb is different from VOC format.
+
+   If you want to pack the images by yourself, please download [WIDERFACE](http://mmlab.ie.cuhk.edu.hk/projects/WIDERFace/) and look `tools/convert_wider_to_imdb.py`.
+
+3.  Training PVANet
     ```Shell
     cd $FRCN_ROOT
-    ./models/pvanet/download_imagenet_model.sh
+    tools/train_net.py --gpu 0 --solver models/pvanet/example_train/solver.prototxt --weights models/pvanet/pretrained/pva9.1_pretrained_no_fc6.caffemodel --iters 100000 --cfg models/pvanet/cfgs/train.yml --imdb wider
     ```
-
-8. (Optional) If the scripts don't work, please download the models from ...
-
-    |  Model | Google Drive |
-    | ------ | ---- |
-    | PVANet for VOC2007 | [link](https://drive.google.com/open?id=0Bw_6VpHzQoMVRGZOSEctOEVMLXc) |
-    | PVANet for VOC2012 | [link](https://drive.google.com/open?id=0Bw_6VpHzQoMVa3M0Zm5zNnEtQUE) |
-    | PVANet for VOC2012 (compressed) | [link](https://drive.google.com/open?id=0Bw_6VpHzQoMVZU1BdEJDZG5MVXM) |
-    | PVANet for ILSVRC2012 (ImageNet) | [link](https://drive.google.com/open?id=0Bw_6VpHzQoMVTjctVVhjMXo1X3c) |
-    | PVANet pre-trained | [link](https://drive.google.com/open?id=0Bw_6VpHzQoMVak5FVFBWU0Uyb3M) |
 
 ### How to run the demo
 
-1. Download PASCAL VOC 2007 and 2012
--- Follow the instructions in [py-faster-rcnn README.md](https://github.com/rbgirshick/py-faster-rcnn#beyond-the-demo-installation-for-training-and-testing-models)
+1. Download [pretrained model](https://drive.google.com/open?id=0B18-oWPEXrIWTE00alJRYTA5cW8)
 
-2. PVANet on PASCAL VOC 2007
+2. Run the `tools/demo.py`
     ```Shell
     cd $FRCN_ROOT
-    ./tools/test_net.py --net models/pvanet/pva9.1/PVA9.1_ImgNet_COCO_VOC0712.caffemodel --def models/pvanet/pva9.1/faster_rcnn_train_test_21cls.pt --cfg models/pvanet/cfgs/submit_1019.yml --gpu 0
+    ./tools/demo.py --net output/faster_rcnn_pvanet/wider/pvanet_frcnn_iter_100000.caffemodel --def models/pvanet/pva9.1/faster_rcnn_train_test_21cls.pt --cfg models/pvanet/cfgs/submit_1019.yml --gpu 0
     ```
-
-3. PVANet (compressed)
-    ```Shell
-    cd $FRCN_ROOT
-    ./tools/test_net.py --net models/pvanet/pva9.1/PVA9.1_ImgNet_COCO_VOC0712plus_compressed.caffemodel --def models/pvanet/pva9.1/faster_rcnn_train_test_ft_rcnn_only_plus_comp.pt --cfg models/pvanet/cfgs/submit_1019.yml --gpu 0
-    ```
-
-### Expected results
-
-#### Mean Average Precision on VOC detection tasks
-
-| Model     | VOC2007 mAP (%) | VOC2012 mAP (%) |
-| --------- | ------- | ------- |
-| PVANet+ (VOC2007) | **84.9** | N/A |
-| PVANet+ (VOC2012) | *89.8* | **84.2** |
-| PVANet+ (VOC2012 + compressed) | *87.8* | 83.7 | 
-- The training set for the VOC2012 model includes the VOC2007 test set. Therefore the accuracies on VOC2007 of the model are not meaningful; They're shown here just for reference
-
-#### Validation error on ILSVRC2012
-
-| Input size | Top-1 error (%) | Top-5 error (%) |
-| --- | --- | --- |
-| 192x192 | 30.00 | N/A |
-| 224x224 | 27.66 | 8.84 |
-- We re-trained a 224x224 model from the '192x192' model as a base model.
-

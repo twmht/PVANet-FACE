@@ -49,11 +49,31 @@ This repository contains source files of face detection using the PVANet. It is 
     ./models/pvanet/download_all_models.sh
     ```
 
-2. Download [WIDERFace imdb](https://drive.google.com/open?id=0B18-oWPEXrIWT1lrN2lLdDc1VkE) and put it as `data/widerface/image.db` and `data/widerface/index.db`.
+2. Download [WIDERFace](http://mmlab.ie.cuhk.edu.hk/projects/WIDERFace/) for training.
 
-   I use [python-widerface](https://pypi.python.org/pypi/python-widerface/0.1.1) to pack all the images of WIDERFACE into the custom-defined imdb, where the format of imdb is different from VOC format.
+   I use [python-widerface](https://pypi.python.org/pypi/python-widerface/0.1.1) and [cute-format](https://pypi.python.org/pypi/cute_format) to pack all the images of WIDERFACE into the custom-defined imdb, where the format of imdb is different from VOC format.
 
-   If you want to pack the images by yourself, please download [WIDERFACE](http://mmlab.ie.cuhk.edu.hk/projects/WIDERFace/) and look `tools/convert_wider_to_imdb.py`.
+   please look `tools/convert_wider_to_imdb.py` for detail.
+
+   to run `tools/convert_wider_to_imdb.py`,  update path to WIDERFACE
+
+   for example,
+
+   ```
+   # arg1: path to split (where the label file is)
+   # arg2: path to images
+   # arg3: path to label file name
+    wider_train = WIDER('/opt/WiderFace/wider_face_split',
+                  '/opt/WiderFace/WIDER_train/images',
+                  'wider_face_train.mat')
+
+    cw = CuteWriter('wider-imdb')
+
+    run(wider_train, cw)
+   ```
+
+   this will generate a db named `wider-imdb`, and put wider_train into `data/widerface/`
+
 
 3.  Training PVANet
     ```Shell

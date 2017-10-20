@@ -16,17 +16,14 @@ from voc_eval import voc_eval
 from fast_rcnn.config import cfg
 from image_format_pb2 import Image
 import struct
+from cute.cute_reader import CuteReader
 
 class wider(imdb):
     def __init__(self):
         imdb.__init__(self, 'wider')
         self._data_path = self._get_default_path()
 
-        self._index_set_file = os.path.join(self._data_path, 'index.db')
-        self._image_set_file = os.path.join(self._data_path, 'image.db')
-
-        self._image_set = open(self._image_set_file, 'rb')
-        self._index_set = open(self._index_set_file, 'rb')
+        self.db = CuteReader(os.path.join(self._data_path, 'wider-imdb'))
 
         self._image_width = []
         self._image_height = []
@@ -62,16 +59,11 @@ class wider(imdb):
         Load the indexes listed in this dataset's image set file.
         """
         # Example path to image set file:
-        statinfo = os.stat(self._index_set_file)
-        num = statinfo.st_size / 16
-        return [i for i in xrange(0, num)]
+        return [i for i in xrange(0, self.db.num_data)]
 
 
     def get_proto_at(self, index):
-        self._index_set.seek(index  * 16)
-        to, size = struct.unpack('QQ', self._index_set.read(16))
-        self._image_set.seek(to)
-        byte = self._image_set.read(size)
+        byte = self.db.get(index)
         proto = Image()
         proto.ParseFromString(byte)
         return proto

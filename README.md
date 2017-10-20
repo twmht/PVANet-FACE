@@ -51,15 +51,15 @@ This repository contains source files of face detection using the PVANet. It is 
 
 2. Download [WIDERFace](http://mmlab.ie.cuhk.edu.hk/projects/WIDERFace/) for training.
 
-   I use [python-widerface](https://pypi.python.org/pypi/python-widerface/0.1.1) and [cute-format](https://pypi.python.org/pypi/cute_format) to pack all the images of WIDERFACE into the custom-defined imdb, where the format of imdb is different from VOC format.
+   I use [python-widerface](https://pypi.python.org/pypi/python-widerface/0.1.1) and [cute-format](https://pypi.python.org/pypi/cute_format) to pack all the images of WIDERFace into the custom-defined imdb, where the format of imdb is different from VOC format.
 
    please look `tools/convert_wider_to_imdb.py` for detail.
 
-   to run `tools/convert_wider_to_imdb.py`,  update path to WIDERFACE
+   to run `tools/convert_wider_to_imdb.py`,  update path to WIDERFace
 
    for example,
 
-   ```
+   ```python
    # arg1: path to split (where the label file is)
    # arg2: path to images
    # arg3: path to label file name

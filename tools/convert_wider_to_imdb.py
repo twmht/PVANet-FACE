@@ -3,8 +3,6 @@ from cute.cute_writer import CuteWriter
 from image_format_pb2 import Image
 from io import BytesIO
 from wider import WIDER
-import json
-import struct
 
 def run(wider, cw):
     for data in wider.next():

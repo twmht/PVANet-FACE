@@ -72,7 +72,7 @@ This repository contains source files of face detection using the PVANet. It is 
     run(wider_train, cw)
    ```
 
-   this will generate a db named `wider-imdb`, and put wider_train into `data/widerface/`
+   this will generate a db named `wider-imdb`, and put `wider-imdb` into `data/widerface/`
 
 
 3.  Training PVANet

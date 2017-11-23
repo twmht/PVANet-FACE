@@ -1,6 +1,7 @@
+import _init_paths
 from PIL import Image as pil_image
 from cute.cute_writer import CuteWriter
-from image_format_pb2 import Image
+from datasets.image_format_pb2 import Image
 from io import BytesIO
 from wider import WIDER
 

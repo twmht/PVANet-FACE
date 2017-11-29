@@ -90,3 +90,7 @@ This repository contains source files of face detection using the PVANet. It is 
     cd $FRCN_ROOT
     ./tools/demo.py --net output/faster_rcnn_pvanet/wider/pvanet_frcnn_iter_100000.caffemodel --def models/pvanet/pva9.1/faster_rcnn_train_test_21cls.pt --cfg models/pvanet/cfgs/submit_1019.yml --gpu 0
     ```
+
+### Compression
+
+If you want to compress your model, please look at `tools/gen_merged_model.py`. As compared to sanghoon's implementation (https://github.com/sanghoon/pva-faster-rcnn/blob/master/tools/gen_merged_model.py), I add the function to remove redundant power layers.

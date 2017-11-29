@@ -151,6 +151,8 @@ def process_model(net, src_model, dst_model, func_loop, func_finally):
     for i, layer in enumerate(model.layer):
         map(lambda x: x(layer, net, model, i), func_loop)
 
+    remove_power_layers(net, model)
+
     map(lambda x: x(net, model), func_finally)
 
     with open(dst_model, 'w') as f:
@@ -186,6 +188,24 @@ def pick_empty_layers(layer, net, model, i):
         if no_scaling and zero_bias:
             print 'Delete layer: {}'.format(layer.name)
             to_delete_empty.append(layer)
+
+def remove_power_layers(net, model):
+    pt = None
+    bt = None
+    for i, layer in enumerate(model.layer):
+        if layer.type == 'Power':
+            # Add bias layer if needed
+            if layer.power_param.power == 1.0 and layer.power_param.scale ==  1.0:
+                print 'Delete layer: {}'.format(layer.name)
+                to_delete_empty.append(layer)
+                bt = layer.bottom[0]
+                pt = layer.top[0]
+
+        if layer.type == 'Eltwise':
+            if pt != None and bt != None:
+                if layer.bottom[1] == pt:
+                    layer.bottom[1] = bt
+
 
 def remove_empty_layers(net, model):
     map(model.layer.remove, to_delete_empty)
